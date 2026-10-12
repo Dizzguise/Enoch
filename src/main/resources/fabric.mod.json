@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "enoch",
+  "version": "${version}",
+  "name": "Enoch",
+  "description": "A personal, persistent dimensional return sigil.",
+  "authors": ["Enoch Mods"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {"main": ["com.enochmods.enoch.Enoch"]},
+  "mixins": ["enoch.mixins.json"],
+  "depends": {"fabricloader": ">=0.19.3", "minecraft": "26.2", "java": ">=25", "fabric-api": "*"}
+}

@@ -1,0 +1,7 @@
+Use case: stylized-concept
+Asset type: Minecraft inventory item texture, a single transparent pixel-art sprite.
+Primary request: Enoch's time-anchor sigil, an icy-blue rune medallion with a distinct geometric time-anchor glyph in its center.
+Scene/backdrop: genuinely transparent background, no backdrop.
+Style/medium: crisp Minecraft-compatible pixel art. Draw on a coarse 32 by 32 logical pixel grid enlarged with perfectly hard nearest-neighbor square pixel edges to a 1024 by 1024 square image. Limited palette, chunky readable silhouette and pixel clusters, no smooth gradients.
+Composition: one centered isolated round sigil occupying about 80 percent of image, symmetrical frosty faceted rim and abstract rune symbol. Cool cyan-white highlights, icy blue body, deep navy outline; subtle frozen magic conveyed with hard colored pixels.
+Constraints: only one inventory item, alpha transparency outside the item, no lettering, no words, no numbers, no watermark, no scene, no shadow outside sprite, no blur, no antialiasing, no realistic rendering.
