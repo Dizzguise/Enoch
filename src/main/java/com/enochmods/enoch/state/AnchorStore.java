@@ -20,7 +20,6 @@ import java.util.UUID;
 
 /** Server-thread-only world ledger. No static player/server caches survive shutdown. */
 public final class AnchorStore {
-    public static final long COOLDOWN_MILLIS = 10_000;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final Path file;
     private final Map<UUID, PlayerState> players = new HashMap<>();
@@ -65,8 +64,12 @@ public final class AnchorStore {
 
     /** Called only after the teleport API confirms success. A failed return never mutates this ledger. */
     public void returned(UUID player, long now) {
+        returned(player, now, WorldConfig.DEFAULT);
+    }
+
+    public void returned(UUID player, long now, WorldConfig config) {
         if (get(player).anchor() == null) throw new IllegalStateException("No anchor to consume");
-        put(player, new PlayerState(null, Math.addExact(now, COOLDOWN_MILLIS)));
+        put(player, new PlayerState(null, Math.addExact(now, config.cooldownMillis())));
     }
 
     public void died(UUID player) {

@@ -23,3 +23,8 @@ jobs:
           name: mod-jars
           path: build/libs/*.jar
           if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: resource-pack
+          path: build/resource-pack/enoch-resource-pack-26.2-0.2.4.zip
+          if-no-files-found: error

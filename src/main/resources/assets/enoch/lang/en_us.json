@@ -1,5 +1,0 @@
-{
-  "item.enoch.sigil": "Enoch Sigil",
-  "item.enoch.sigil.tooltip": "Hold in your main hand. Swap hands to anchor, then return.",
-  "item.enoch.sigil.tooltip_cooldown": "10-second recovery after returning. Death clears your anchor."
-}

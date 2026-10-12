@@ -1,25 +1,15 @@
 # Enoch verification
 
-Release: **0.1.0**, Minecraft **26.2**, Java **25**, Fabric Loader **0.19.3**, Fabric API **0.161.0+26.2**.
+Version 0.2.2 targets Minecraft Java 26.2, Java 25, Fabric Loader 0.19.3, and Fabric API 0.161.0+26.2.
 
-## Checks included in this repository
+## Included executable checks
 
-From the repository root, run:
+`gradlew build` runs `verifyLedger` (27 checks) and `verifyConfiguration` (47 checks), for 74 checks total. These cover anchor serialization, exact dimension/position/view persistence, cooldown deadlines and restart, player/world isolation, death, malformed records, failed saves and retry, operator permission gates, configuration persistence and rollback, and vanilla sigil identity/components. The ordinary Gradle `test` task is disabled because the checks are executable Java harnesses rather than JUnit tests.
 
-```powershell
-.\gradlew.bat build sourcesJar
-```
+The resource pack builds with the platform-independent `buildResourcePack` Gradle ZIP task. Its archive contains `pack.mcmeta` at the root, the amethyst selector, and the original sigil model/texture. Packaging uses stable entry order and timestamps. The original model and texture were compared byte-for-byte with the preserved approved source when imported into this repository.
 
-`build` runs `verifyLedger`, an executable Java harness with **27 checks**. The harness covers anchor serialization and exact coordinates/view, cooldown boundaries and restart persistence, UUID and world isolation, death handling, malformed records, and save retry. These checks passed for the release. The harness can also be run directly with `.\gradlew.bat verifyLedger`.
+## Prior gameplay verification
 
-## External integration coverage
+On October 12, 2026, companion headless server tests passed native Swap handling, safe/blocked returns, cross-dimension returns, persistence, cooldown, selector migration, and two Enoch-only server tests. An isolated real Minecraft 26.2 client confirmed native mark/return without changing hands and the original sigil artwork with a resource pack. These companion harnesses are separate from this repository's 74 executable checks and are not invoked by its CI workflow.
 
-A separate development integration suite passed **22 combined server GameTests** against Enoch and Hunter's Eye. Enoch coverage included cross-dimension returns, destination collision rejection, cooldown enforcement, death behavior, and actual swap-hand packet handlers exercised with simulated connections. This integration test source is not included in this repository; the build command above runs the included ledger harness only. The combined count is not a count of Enoch-only tests.
-
-## Manual gameplay status
-
-The tester confirmed basic Enoch gameplay works. That confirmation does not establish every acceptance scenario in the README.
-
-Still to verify manually: reconnect and restart behavior in normal play, independent worlds and players, obstructed or unloaded destinations, world-border rejection, death during cooldown, and falling/crouching/gliding returns. Dedicated-server play with two clients and a complete visual check of the texture, tooltip, action bar, and sounds remain pending.
-
-Automated server checks establish behavior under their test conditions; they do not establish rendered pixels or two-client gameplay.
+First marking uses `RESPAWN_ANCHOR_SET_SPAWN`; returning uses the enderman teleport cue. Independent vanilla clients on a dedicated server and the complete [in-game acceptance checklist](README.md#in-game-acceptance-checklist) remain manual acceptance work. A passing build and packaged artwork do not establish those additional gameplay results.

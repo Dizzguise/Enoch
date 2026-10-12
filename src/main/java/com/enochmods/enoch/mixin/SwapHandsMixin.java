@@ -1,6 +1,7 @@
 package com.enochmods.enoch.mixin;
 
 import com.enochmods.enoch.Enoch;
+import com.enochmods.enoch.SigilData;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -20,7 +21,7 @@ abstract class SwapHandsMixin {
             cancellable = true)
     private void enoch$useSigil(ServerboundPlayerActionPacket packet, CallbackInfo ci) {
         if (packet.getAction() == ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND
-                && player.getMainHandItem().is(Enoch.SIGIL)) {
+                && SigilData.isSigil(player.getMainHandItem())) {
             ci.cancel();
             Enoch.activate(player);
         }

@@ -3,19 +3,19 @@ package com.enochmods.enoch;
 import com.enochmods.enoch.state.Anchor;
 import com.enochmods.enoch.state.AnchorStore;
 import com.enochmods.enoch.state.PlayerState;
+import com.enochmods.enoch.state.WorldConfig;
+import com.enochmods.enoch.state.WorldConfigStore;
 import java.io.IOException;
 import java.util.IdentityHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -27,8 +27,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -38,29 +36,29 @@ import org.slf4j.LoggerFactory;
 public final class Enoch implements ModInitializer {
     public static final String MOD_ID = "enoch";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final Identifier SIGIL_ID = Identifier.fromNamespaceAndPath(MOD_ID, "sigil");
-    public static final Item SIGIL = new SigilItem(new Item.Properties()
-            .setId(ResourceKey.create(Registries.ITEM, SIGIL_ID)).stacksTo(1).rarity(Rarity.RARE));
     // Keyed by server identity, never by global dimension identifiers or game-directory path.
     private static final Map<MinecraftServer, AnchorStore> STORES = new IdentityHashMap<>();
+    private static final Map<MinecraftServer, WorldConfigStore> CONFIGS = new IdentityHashMap<>();
 
     @Override
     public void onInitialize() {
-        Registry.register(BuiltInRegistries.ITEM, SIGIL_ID, SIGIL);
-        CreativeModeTabEvents.modifyOutputEvent(ResourceKey.create(Registries.CREATIVE_MODE_TAB,
-                Identifier.withDefaultNamespace("tools_and_utilities"))).register(entries -> entries.accept(SIGIL));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
+                EnochCommands.register(dispatcher, CONFIGS::get));
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             AnchorStore store = new AnchorStore(server.getWorldPath(LevelResource.DATA).resolve("enoch-anchors.json"));
+            WorldConfigStore config = new WorldConfigStore(server.getWorldPath(LevelResource.DATA).resolve("enoch-config.json"));
             try {
+                config.load();
                 store.load();
                 STORES.put(server, store);
+                CONFIGS.put(server, config);
                 LOGGER.info("Enoch anchor ledger loaded for {}", server.getWorldPath(LevelResource.ROOT));
             } catch (IOException exception) {
-                LOGGER.error("Enoch disabled for this world because its ledger could not be loaded", exception);
+                LOGGER.error("Enoch disabled for this world because its ledger or configuration could not be loaded", exception);
             }
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> save(STORES.get(server)));
-        ServerLifecycleEvents.SERVER_STOPPED.register(STORES::remove);
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> { STORES.remove(server); CONFIGS.remove(server); });
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, source) -> {
             if (entity instanceof ServerPlayer player) {
                 AnchorStore store = STORES.get(player.level().getServer());
@@ -72,7 +70,9 @@ public final class Enoch implements ModInitializer {
             AnchorStore store = STORES.get(server);
             if (server.getTickCount() % 100 == 0) save(store);
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-                if (player.getMainHandItem().is(SIGIL) && player.isAlive()) {
+                for (int slot = 0; slot < 36; slot++) SigilData.refreshModel(player.getInventory().getItem(slot));
+                SigilData.refreshModel(player.getOffhandItem());
+                if (SigilData.isSigil(player.getMainHandItem()) && player.isAlive()) {
                     player.sendOverlayMessage(status(store, player));
                 }
             }
@@ -99,7 +99,7 @@ public final class Enoch implements ModInitializer {
             store.mark(player.getUUID(), anchor, now);
             save(store);
             player.sendOverlayMessage(Component.literal("Enoch: anchor set · " + describe(anchor)));
-            sound(player, SoundEvents.AMETHYST_BLOCK_CHIME, 1.2f);
+            sound(player, SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, 1.0f);
             return;
         }
         Anchor anchor = state.anchor();
@@ -140,9 +140,11 @@ public final class Enoch implements ModInitializer {
         player.setKnownMovement(Vec3.ZERO);
         player.hurtMarked = true;
         player.resetFallDistance();
-        store.returned(player.getUUID(), System.currentTimeMillis());
+        WorldConfig config = CONFIGS.get(player.level().getServer()).get();
+        store.returned(player.getUUID(), System.currentTimeMillis(), config);
         save(store);
-        player.sendOverlayMessage(Component.literal("Enoch: returned · recovering 10s"));
+        player.sendOverlayMessage(Component.literal(config.cooldownSeconds() == 0 ? "Enoch: returned · ready"
+                : "Enoch: returned · recovering " + config.cooldownSeconds() + "s"));
         sound(player, SoundEvents.ENDERMAN_TELEPORT, 1.0f);
     }
 

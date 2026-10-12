@@ -1,5 +1,5 @@
 # Item artwork
 
-The inventory sprite was generated with OpenAI image generation on October 12, 2026 using the direction in [the generation prompt](docs/item-art-prompt.txt).
+The original 0.1.0 inventory sprite was generated on October 12, 2026 using [the generation prompt](docs/item-art-prompt.txt). Its transparent original is the active [sigil texture](resource-pack/pack/assets/enoch/textures/item/sigil.png); the original [generated item model](resource-pack/pack/assets/enoch/models/item/sigil.json) is included beside it.
 
-The resulting transparent PNG is included unchanged in this mod's resource tree. It is 1254 by 1254 pixels with RGBA transparency. No third-party texture pack is required.
+Enoch 0.2.2 marks a tagged vanilla amethyst shard with `enoch:sigil` at custom-model-data string index 0. The [included resource pack](resource-pack/README.md) restores the approved original blue sprite and generated model byte-for-byte. Without a pack, the sigil has vanilla appearance and remains functional. Ordinary shards keep their vanilla fallback. No new artwork is generated or altered, and a client helper is unnecessary for item textures.

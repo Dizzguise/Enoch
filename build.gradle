@@ -24,5 +24,22 @@ tasks.register('verifyLedger', JavaExec) {
     mainClass = 'com.enochmods.enoch.state.LedgerVerification'
 }
 check.dependsOn verifyLedger
+tasks.register('verifyConfiguration', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.enochmods.enoch.ConfigurationVerification'
+}
+check.dependsOn verifyConfiguration
 // This project uses the explicit executable harness instead of a JUnit discovery engine.
 tasks.named('test').configure { enabled = false }
+
+tasks.register('buildResourcePack', Zip) {
+    group = 'build'
+    description = 'Package the optional original sigil artwork for vanilla 26.2 clients.'
+    from('resource-pack/pack')
+    destinationDirectory = layout.buildDirectory.dir('resource-pack')
+    archiveFileName = "enoch-resource-pack-${project.minecraft_version}-${project.resource_pack_version}.zip"
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+tasks.named('assemble').configure { dependsOn buildResourcePack }
