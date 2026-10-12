@@ -2,15 +2,15 @@
 
 A standalone, **server-only Fabric Minecraft 26.2** mod compatible with unmodified 26.2 clients. Hold an **Enoch Sigil** in your main hand and press your **Swap Item With Offhand** key (default **F**): the first press remembers your dimension, feet position, yaw, and pitch; the next returns you there, consumes the anchor, and starts a real-time cooldown (**10 seconds by default**). The sigil stays in your main hand. Regular hand swapping works with other items.
 
-Craft one sigil in a crafting table using four diamonds, four feathers, and one ender pearl:
+Craft one sigil in a crafting table using four diamonds, two elytra, two feathers, and one ender pearl:
 
 ```text
-D F D
+D E D
 F P F
-D F D
+D E D
 ```
 
-`D` = diamond, `F` = feather, `P` = ender pearl. Acquiring an ender pearl unlocks the recipe in the vanilla recipe book. The output has the same tag, name, lore, unstackable size, and artwork selector as a command-created sigil.
+`D` = diamond, `E` = elytra, `F` = feather, `P` = ender pearl. Acquiring an ender pearl unlocks the recipe in the vanilla recipe book. The output has the same tag, name, lore, unstackable size, and artwork selector as a command-created sigil.
 
 An operator with gamemaster permission (vanilla permission level 2 or higher), or any player currently in Creative mode, can obtain a sigil or give one to an online player:
 
@@ -25,7 +25,7 @@ The sigil is a tagged vanilla **amethyst shard**, with an icy blue name, unstack
 
 Download the installable jar from [Enoch releases](https://github.com/Dizzguise/Enoch/releases), or the `mod-jars` artifact of a successful [Build workflow](https://github.com/Dizzguise/Enoch/actions/workflows/build.yml). The optional artwork ZIP is in the `resource-pack` artifact.
 
-Use **Java 25**, **Fabric Loader 0.19.3 or newer**, and **Fabric API for 26.2** (built against **0.161.0+26.2**). Put `enoch-0.2.3.jar` and Fabric API in the **server's** `mods` directory. Joining clients need only Minecraft 26.2; they do not need Fabric, Fabric API, or Enoch. To play single-player, install Enoch and Fabric API in your Fabric instance so its integrated server runs the mod. This project does not depend on Ghost Slots or Hunter's Eye. No helper mod is needed.
+Use **Java 25**, **Fabric Loader 0.19.3 or newer**, and **Fabric API for 26.2** (built against **0.161.0+26.2**). Put `enoch-0.2.4.jar` and Fabric API in the **server's** `mods` directory. Joining clients need only Minecraft 26.2; they do not need Fabric, Fabric API, or Enoch. To play single-player, install Enoch and Fabric API in your Fabric instance so its integrated server runs the mod. This project does not depend on Ghost Slots or Hunter's Eye. No helper mod is needed.
 
 ### Original artwork
 
@@ -35,7 +35,7 @@ The original texture and generated item model are preserved byte-for-byte. The s
 
 ### Upgrading from 0.2.0
 
-Back up the world and replace the old jar with 0.2.3. Anchors, cooldowns, and tagged vanilla sigils remain compatible. Existing sigils gain the artwork selector while carried in the 36 main inventory/hotbar slots or offhand, checked once per second. Stored sigils refresh after retrieval. Other CustomModelData fields and strings after reserved index 0 are preserved. Enoch 0.2.3 adds survival crafting and Creative access to commands. The optional artwork pack remains version 0.2.4.
+Back up the world and replace the old jar with 0.2.4. Anchors, cooldowns, and tagged vanilla sigils remain compatible. Existing sigils gain the artwork selector while carried in the 36 main inventory/hotbar slots or offhand, checked once per second. Stored sigils refresh after retrieval. Other CustomModelData fields and strings after reserved index 0 are preserved. Enoch 0.2.3 adds survival crafting and Creative access to commands. Enoch 0.2.4 changes the recipe to require two elytra and two feathers. The optional artwork pack remains version 0.2.4.
 
 ### Upgrading from 0.1.0
 
@@ -67,7 +67,7 @@ Writes use a flushed temporary file followed by atomic replacement where support
 .\gradlew.bat build sourcesJar
 ```
 
-On Linux or macOS, use `bash ./gradlew build sourcesJar`. Run from the repository root with Java 25. This repository builds independently. The installable jar is `build/libs/enoch-0.2.3.jar`; the `sources` jar is for source inspection. The optional artwork ZIP is `build/resource-pack/enoch-resource-pack-26.2-0.2.4.zip`. To package only the artwork, run `buildResourcePack` instead of `build`.
+On Linux or macOS, use `bash ./gradlew build sourcesJar`. Run from the repository root with Java 25. This repository builds independently. The installable jar is `build/libs/enoch-0.2.4.jar`; the `sources` jar is for source inspection. The optional artwork ZIP is `build/resource-pack/enoch-resource-pack-26.2-0.2.4.zip`. To package only the artwork, run `buildResourcePack` instead of `build`.
 
 `build` runs executable Java checks through `verifyLedger`, `verifyConfiguration`, and `verifyRecipe`, covering anchor serialization, cooldown boundaries/restart, player/world isolation, death behavior, malformed records, save failures/retry, actual command permission gates, persistent settings, vanilla sigil identity/components, vanilla recipe and advancement codecs, ingredient placement, crafted output, and recipe-book display components. The sources jar is intentionally an ordinary jar because 26.2 is unobfuscated. See [VERIFICATION.md](VERIFICATION.md) for measured coverage and remaining gameplay checks, and [CHANGELOG.md](CHANGELOG.md) for release changes.
 
@@ -86,4 +86,4 @@ On Linux or macOS, use `bash ./gradlew build sourcesJar`. Run from the repositor
 - Mark while falling, land elsewhere, then return. Confirm velocity/fall distance reset; verify unobstructed standing-space validation while crouching or gliding.
 - On a dedicated Fabric server, connect two unmodified clients and repeat two-player and restart checks. Check its log for mixin, save, or classloading errors.
 
-Version 0.2.3 passes 125 executable JVM checks. Prior companion server/client verification covered native Swap handling, mark/return, and the original blue sigil artwork. Independent vanilla clients on a dedicated server and the full manual acceptance checklist remain to be observed. See [VERIFICATION.md](VERIFICATION.md) for measured coverage and its limits.
+Version 0.2.4 passes 126 executable JVM checks. Prior companion server/client verification covered native Swap handling, mark/return, and the original blue sigil artwork. Independent vanilla clients on a dedicated server and the full manual acceptance checklist remain to be observed. See [VERIFICATION.md](VERIFICATION.md) for measured coverage and its limits.

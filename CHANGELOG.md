@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4
+
+- Revise the sigil recipe to diamond corners, elytra at top/bottom, feathers at left/right, and an ender pearl center. Each craft consumes four diamonds, two elytra, two feathers, and one ender pearl.
+- Verify the new grid and reject the former four-feather recipe. Keep the recipe-book unlock, output components, controls, and artwork pack 0.2.4 unchanged.
+
 ## 0.2.3
 
 - Add a survival crafting-table recipe: diamond corners, feather edges, and an ender pearl center create one Enoch Sigil. The vanilla shaped recipe preserves all command-created sigil components and works on unmodified clients. Acquiring an ender pearl unlocks it in the recipe book.

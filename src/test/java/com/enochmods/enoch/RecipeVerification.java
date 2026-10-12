@@ -37,11 +37,15 @@ public final class RecipeVerification {
         ShapedRecipe recipe = (ShapedRecipe) decoded;
         check(recipe.getSerializer() == ShapedRecipe.SERIALIZER, "no custom network serializer needed");
         check(recipe.getWidth() == 3 && recipe.getHeight() == 3, "recipe requires a 3x3 crafting table");
-        List<ItemStack> grid = List.of(new ItemStack(Items.DIAMOND), new ItemStack(Items.FEATHER), new ItemStack(Items.DIAMOND),
+        List<ItemStack> grid = List.of(new ItemStack(Items.DIAMOND), new ItemStack(Items.ELYTRA), new ItemStack(Items.DIAMOND),
                 new ItemStack(Items.FEATHER), new ItemStack(Items.ENDER_PEARL), new ItemStack(Items.FEATHER),
-                new ItemStack(Items.DIAMOND), new ItemStack(Items.FEATHER), new ItemStack(Items.DIAMOND));
+                new ItemStack(Items.DIAMOND), new ItemStack(Items.ELYTRA), new ItemStack(Items.DIAMOND));
         CraftingInput input = CraftingInput.of(3, 3, grid);
-        check(recipe.matches(input, null), "diamond corners, feather edges and pearl center craft");
+        check(recipe.matches(input, null), "diamond corners, elytra top/bottom, feather sides and pearl center craft");
+        var oldGrid = new ArrayList<>(grid);
+        oldGrid.set(1, new ItemStack(Items.FEATHER));
+        oldGrid.set(7, new ItemStack(Items.FEATHER));
+        check(!recipe.matches(CraftingInput.of(3, 3, oldGrid), null), "old four-feather recipe is rejected");
         for (int slot = 0; slot < 9; slot++) {
             var wrong = new ArrayList<>(grid);
             wrong.set(slot, new ItemStack(Items.AMETHYST_SHARD));
