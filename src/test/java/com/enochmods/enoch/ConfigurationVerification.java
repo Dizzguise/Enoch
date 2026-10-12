@@ -71,11 +71,15 @@ public final class ConfigurationVerification {
             CommandSourceStack admin = source(PermissionSet.ALL_PERMISSIONS);
             CommandSourceStack regular = source(PermissionSet.NO_PERMISSIONS);
             CommandSourceStack moderator = source(permission -> permission.equals(Permissions.COMMANDS_MODERATOR));
-            check(!dispatcher.getRoot().getChild("enoch").canUse(regular), "regular players cannot see admin commands");
-            check(!dispatcher.getRoot().getChild("enoch").canUse(moderator), "moderator below gamemaster cannot configure");
+            check(!dispatcher.getRoot().getChild("enoch").canUse(regular), "source without permission or a creative player cannot see commands");
+            check(!dispatcher.getRoot().getChild("enoch").canUse(moderator), "moderator without a creative player cannot configure");
+            check(dispatcher.getRoot().getChild("enoch").canUse(admin), "gamemaster console source passes the root gate");
             for (String command : new String[] {"enoch config show", "enoch config cooldown 45", "enoch config reset", "enoch give"}) {
-                expect(CommandSyntaxException.class, () -> dispatcher.execute(command, regular), "regular player cannot run " + command);
+                expect(CommandSyntaxException.class, () -> dispatcher.execute(command, regular), "unprivileged source cannot run " + command);
+                expect(CommandSyntaxException.class, () -> dispatcher.execute(command, moderator), "moderator source cannot run " + command);
             }
+            expect(CommandSyntaxException.class, () -> dispatcher.execute("enoch give", admin), "console give still requires a player argument");
+            check(EnochCommands.canUse(admin) && !EnochCommands.canUse(regular), "command gate preserves actual source permission checks");
             check(dispatcher.execute("enoch config show", admin) == 1, "administrator can inspect configuration");
             check(dispatcher.execute("enoch config cooldown 45", admin) == 1, "administrator can set cooldown");
             WorldConfigStore commandRestart = new WorldConfigStore(file);

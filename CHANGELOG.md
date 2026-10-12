@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3
+
+- Add a survival crafting-table recipe: diamond corners, feather edges, and an ender pearl center create one Enoch Sigil. The vanilla shaped recipe preserves all command-created sigil components and works on unmodified clients. Acquiring an ender pearl unlocks it in the recipe book.
+- Allow all `/enoch` commands for players currently in Creative mode as well as sources with gamemaster permission. Non-operator Survival players can craft and use the sigil, but cannot run its commands. Refresh the permission-filtered command tree after successful game-mode changes.
+- Add 44 vanilla recipe, advancement, ingredient, crafted-output, and book-display checks and expand command checks to 54, for 125 JVM checks total. Keep artwork pack version 0.2.4.
+
 ## 0.2.2
 
 - Use `RESPAWN_ANCHOR_SET_SPAWN` for marking instead of the anchor-charge cue. Keep the enderman teleport return and bass-note rejected-use cues, with anchors, cooldowns and controls unchanged.

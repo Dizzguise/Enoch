@@ -30,6 +30,12 @@ tasks.register('verifyConfiguration', JavaExec) {
     mainClass = 'com.enochmods.enoch.ConfigurationVerification'
 }
 check.dependsOn verifyConfiguration
+tasks.register('verifyRecipe', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.enochmods.enoch.RecipeVerification'
+}
+check.dependsOn verifyRecipe
 // This project uses the explicit executable harness instead of a JUnit discovery engine.
 tasks.named('test').configure { enabled = false }
 

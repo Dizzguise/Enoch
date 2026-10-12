@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["DFD", "FPF", "DFD"],
+  "key": {
+    "D": "minecraft:diamond",
+    "F": "minecraft:feather",
+    "P": "minecraft:ender_pearl"
+  },
+  "result": {
+    "id": "minecraft:amethyst_shard",
+    "count": 1,
+    "components": {
+      "minecraft:custom_data": {"enoch_sigil": true},
+      "minecraft:max_stack_size": 1,
+      "minecraft:custom_name": {"text": "Enoch Sigil", "color": "#9EDFFF", "italic": false},
+      "minecraft:lore": [
+        {"text": "Hold in your main hand. Swap hands to anchor, then return.", "color": "gray"},
+        {"text": "Recovery is configured by the server. Death clears your anchor.", "color": "dark_aqua"}
+      ],
+      "minecraft:custom_model_data": {"strings": ["enoch:sigil"]}
+    }
+  }
+}

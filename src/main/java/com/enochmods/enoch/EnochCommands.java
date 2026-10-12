@@ -19,7 +19,7 @@ public final class EnochCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher,
                                 Function<MinecraftServer, WorldConfigStore> configurations) {
         dispatcher.register(Commands.literal("enoch")
-                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                .requires(EnochCommands::canUse)
                 .then(Commands.literal("give")
                         .executes(context -> give(context.getSource(), context.getSource().getPlayerOrException()))
                         .then(Commands.argument("player", EntityArgument.player())
@@ -32,6 +32,12 @@ public final class EnochCommands {
                                                 new WorldConfig(IntegerArgumentType.getInteger(context, "seconds"))))))
                         .then(Commands.literal("reset")
                                 .executes(context -> set(context.getSource(), configurations, WorldConfig.DEFAULT)))));
+    }
+
+    /** Creative players can administer Enoch; every other source needs gamemaster permission. */
+    public static boolean canUse(CommandSourceStack source) {
+        return Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(source)
+                || source.getEntity() instanceof ServerPlayer player && player.isCreative();
     }
 
     private static int give(CommandSourceStack source, ServerPlayer player) {
